@@ -5,7 +5,7 @@ Digital signage / dotykový kiosek — TV panely v Enotéce znojemských vín. V
 
 ## Stack
 - **Hardware:** Huidu signage přehrávač, firmware "MagicPlayer", postavený na běžném Androidu 14 (WebView 127), dotykový displej. Ne uzamčená smart TV — kromě vestavěného signage systému (Huidu cloud) na něm nejspíš jde nainstalovat i běžnou appku.
-- **Správa obsahu — primárně:** [Fully Kiosk Browser](https://www.fully-kiosk.com/en/) sideloadovaný APK, natrvalo nastavený na jednu URL (naši `index.html`). Appka má řešit kiosk mód (fullscreen, lockdown, autostart po výpadku proudu) — zatím rozpracováno, viz Otevřené body.
+- **Správa obsahu — primárně:** [Fully Kiosk Browser](https://www.fully-kiosk.com/en/) sideloadovaný APK, natrvalo nastavený na jednu URL (naši `index.html`). Na panelu 1 nainstalováno a funkční — fullscreen, autoreload-on-idle vrací na nabídku po nečinnosti. Kiosk Mode (lockdown) zatím vypnutý, viz Otevřené body.
 - **Správa obsahu — fallback**, pokud sideload appky nepůjde: cloud platforma [led-cloud.com](https://led-cloud.com/) (XiaoHui Cloud, Huidu) — bezplatná, cluster management pro víc panelů, program editor má widget "web page/HTML". Riziko: takové widgety bývají omezený/screenshot-based webview, kvalita vykreslení naší stránky není jistá.
 - **Vlastní obsah:** `index.html` — vstupní/výběrová obrazovka (HTML/CSS/JS bez frameworku, dotykové dlaždice). Žádná automatická rotace — návštěvník si klepnutím vybere web, prohlížeč na něj přímo naviguje (top-level, ne iframe).
 - **Deploy:** živé na **https://tv-enoteka.vercel.app/** — GitHub `ssatek/tv-enoteka` → Vercel auto-deploy na push do `main` (stejný postup jako u `menu_vinotrh.eshop` / `enoteka_vinotrh.eshop`, viz `01-projects/CLAUDE.md` → Deploy statických webů).
@@ -25,12 +25,12 @@ Digital signage / dotykový kiosek — TV panely v Enotéce znojemských vín. V
 | Ochutnej Znojmo | https://ochutnejznojmo.cz/ | ❌ `X-Frame-Options: SAMEORIGIN` |
 | LAHOFER | https://lahofer.cz/ | ✅ lze i do iframe |
 
-Protože 2 z 5 webů nejdou vložit do iframe (blokují to hlavičkou), chovají se **všechny** dlaždice stejně — přímý odkaz, ne iframe. Návštěvník tím opouští naši stránku; návrat zpět na nabídku zatím řeší jen tlačítko zpět v prohlížeči / Fully Kiosk "Home" gesto (viz otevřený bod níže).
+Protože 2 z 5 webů nejdou vložit do iframe (blokují to hlavičkou), chovají se **všechny** dlaždice stejně — přímý odkaz, ne iframe. Návštěvník tím opouští naši stránku; návrat zpět na nabídku řeší **Fully Kiosk "Auto Reload on Idle"** (30–60 s nečinnosti → návrat na Start URL) — nastaveno a ověřeno funkční na panelu 1.
 
 `www_zwg.wine` a `prezentace_ZWG` byly z nabídky vyřazeny na žádost uživatele (2026-09-08).
 
 ## Otevřené body
-- **Návrat na vstupní obrazovku po odchodu na jiný web** — zatím neřešeno. Až se vrátíme ke konfiguraci Fully Kiosk, ověřit jeho funkci pro automatický návrat na Start URL po X sekundách nečinnosti.
+- **Kiosk Mode zůstává vypnutý** — konflikt appky s nativním launcherem MagicPlayer (opakované "Blocked Magic Player" blikání). Řešení: nejdřív nastavit Fully Kiosk jako výchozí Home/launcher zařízení, pak zapnout Kiosk Mode. Viz `docs/nastaveni-tv.md`.
 - Displej panelu 1 hlásí rozlišení 3840×2160 @ 90° — fyzická orientace (na výšku/na šířku) je třeba potvrdit na místě, ovlivní layout `index.html`.
-- Fully Kiosk na panelu 1: Kiosk Mode zatím vypnutý kvůli konfliktu s nativním launcherem MagicPlayer (blikání) + appka hlásila "Waiting for network connection" — řešení odloženo, viz `docs/nastaveni-tv.md`.
+- Panely 2 a 3 — fyzicky zapojit, zopakovat instalaci Fully Kiosk (funkční postup viz `docs/nastaveni-tv.md`), doplnit Device ID/IP do inventáře.
 - Přesný postup nastavení viz `docs/nastaveni-tv.md`.

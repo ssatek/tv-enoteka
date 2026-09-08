@@ -2,7 +2,7 @@
 
 ## Co je za hardware
 
-Panel je Android digital-signage přehrávač od **Shenzhen Huidu Technology** (firmware "MagicPlayer"), postavený na běžném Androidu 14 — ne uzamčená smart TV. To znamená, že kromě vestavěného signage systému (posílání "programů" z cloudu/appky/USB) na něm jde nejspíš nainstalovat i běžnou Android appku, pokud zařízení umožňuje instalaci z neznámých zdrojů / USB.
+Panel je Android digital-signage přehrávač od **Shenzhen Huidu Technology** (firmware "MagicPlayer"), postavený na běžném Androidu 14, dotykový displej — ne uzamčená smart TV.
 
 - **Device model:** 3576V (Rockchip RK3576, Cortex-A72×4 + Cortex-A53×4)
 - **Systém:** Android 14, WebView 127.0.6533.64
@@ -12,53 +12,51 @@ Panel je Android digital-signage přehrávač od **Shenzhen Huidu Technology** (
 
 ## Zjištěná zařízení
 
-| # | Device ID | Wi-Fi IP | Wi-Fi MAC | Umístění | Poznámka |
-|---|-----------|----------|-----------|----------|----------|
-| 1 | `3576V-4C6-02D1D` | 10.0.250.41 | 84:93:ec:2e:c9:11 | Enotéka — TBD | Aktuálně "no program", zapojeno na Wi-Fi, LAN nepřipojena (Ethernet IP 0.0.0.0) |
+| # | Device ID | Wi-Fi IP | Wi-Fi MAC | Umístění | Stav |
+|---|-----------|----------|-----------|----------|------|
+| 1 | `3576V-4C6-02D1D` | 10.0.250.41 | 84:93:ec:2e:c9:11 | Enotéka — TBD | ✅ Fully Kiosk Browser nainstalován a funkční |
 | 2 | — | — | — | — | Doplnit při zapojení druhého panelu |
 | 3 | — | — | — | — | Doplnit při zapojení třetího panelu |
 
-## Zvolený přístup: kiosk prohlížeč místo Huidu cloudu
+## Zvolený přístup: Fully Kiosk Browser (funguje, panel 1 hotový)
 
-Naše `index.html` je samostatná webová stránka, která si **sama v JS řídí rotaci obsahu** (střídání ZWG.WINE / vinné karty / nápojového lístku). Díky tomu stačí, aby na TV běžel prohlížeč natrvalo nastavený na tuhle jednu URL — není potřeba nic posílat přes Huidu cloud, žádný účet, žádné "programy". Update obsahu = úprava kódu a nový deploy, TV se samy obnoví (stránka má vestavěný auto-reload).
+Appka se natrvalo drží na jedné URL — naší vstupní obrazovce `https://tv-enoteka.vercel.app/` s dlaždicemi. Update obsahu = úprava kódu v repu a push, appka se sama obnoví.
 
-Prostý Chrome ale není kiosk režim (adresní řádek, dialogy po pádu, uživatel může omylem přepnout appku). Proto **Fully Kiosk Browser** — standardní appka pro přesně tenhle účel (digital signage): plná obrazovka, autostart po zapnutí/výpadku proudu, watchdog při zamrznutí, uzamčení proti vystoupení z appky.
+### Funkční postup instalace a nastavení (ověřeno na panelu 1)
 
-### Postup A — Fully Kiosk Browser (primární, zkusit jako první)
+1. **Instalace APK z USB.** Stáhnout **Fully Kiosk Browser APK ver. 1.61.3 (regular edition)** z [fully-kiosk.com](https://www.fully-kiosk.com/en/) (ne Play Store, ne EMM/Single App/Video/Exam edice) na USB disk, vložit do zařízení — na tomhle firmwaru appka po vložení USB **automaticky nabídla instalaci**, nebylo potřeba ručně hledat "Unknown sources".
+2. V **Quick Start Settings** appky nastavit:
+   - **Start URL:** `https://tv-enoteka.vercel.app/` — **pozor, bez `www.`** (s `www.` to timeoutuje, tahle subdoména neexistuje)
+   - **Fullscreen Mode:** zapnuto
+   - **Show Action Bar / Show Address Bar:** vypnuto
+   - **Kiosk Mode:** zatím **vypnuto** (viz Otevřené body — konflikt s nativním launcherem MagicPlayer)
+3. V **Web Auto Reload**:
+   - **Auto Reload on Idle:** zapnuto, 30–60 s
+   - **Load Current Page on Auto Reload:** **vypnuto** (aby se po timeoutu vracelo na Start URL — naši nabídku — a ne jen obnovilo aktuální cizí stránku)
+   - volitelně **Skip Auto Reload if Showing the Start URL:** zapnuto
+   
+   → Tohle řeší návrat na hlavní nabídku: návštěvník klikne na dlaždici (VINOTRH.CZ, LAHOFER…), prohlíží si cizí web, po 30–60 s nečinnosti appka sama naskočí zpátky na naši vstupní obrazovku. **Ověřeno funkční.**
+4. Zopakovat pro panel 2 a 3, jakmile budou fyzicky zapojené (appka umí export/import nastavení mezi zařízeními, nemusí se klikat ručně 3×).
 
-1. **Ověřit, že jde instalovat APK.** V menu zařízení (4× klik na displej nebo tlačítko menu) → **System setting** → hledej "Unknown sources" / "Instalace z neznámých zdrojů" nebo "Developer options". Pokud je vypnuté, zapnout. Pokud v systému chybí Play Store, appka se instaluje jen ručně (viz krok 2).
-2. **Stáhnout Fully Kiosk Browser APK** přímo z oficiálního webu [fully-kiosk.com](https://www.fully-kiosk.com/en/) (ne Play Store, pro případ, že na zařízení Play Store není) — na USB flash disk, vložit do zařízení a nainstalovat přes souborový manažer / instalaci z USB.
-3. Po prvním spuštění proběhne **setup wizard** → nastavit:
-   - **Start URL:** `https://tv-enoteka.vercel.app/`
-   - **Exit PIN** (aby se appka nedala omylem/schválně opustit)
-4. V nastavení appky (Device Management):
-   - **Launch on Boot** → zapnout (appka naskočí sama po výpadku proudu/restartu)
-   - **Keep Screen On** → zapnout, **Screen Off Timer** → vypnout
-5. Zapnout **Kiosk Mode / Lockdown** (plná obrazovka, zákaz notifikační lišty, zákaz tlačítka Home/Back). Zdarma appka nabízí PLUS funkce (kiosk lockdown, remote admin) **jako neomezenou zkoušku** — pro trvalé nasazení bude potřeba licence na zařízení (cena na fully-kiosk.com), ale funkčně to jde otestovat hned zdarma.
-6. Otestovat: vypnout a zapnout přívod proudu u TV → appka by se měla sama spustit a naběhnout na naši stránku bez zásahu.
-7. Zopakovat pro panel 2 a 3 (appka umí export/import nastavení mezi zařízeními — nemusí se konfigurovat ručně 3×).
+### Fallback — Huidu cloud (led-cloud.com), pokud by sideload APK na jiném panelu nešel
 
-### Postup B — Huidu cloud (fallback, pokud sideload APK nejde)
+Bezplatná cloud platforma XiaoHui Cloud (Huidu) — cluster management pro víc panelů, editor programů má widget "web page/HTML". Riziko: takové widgety bývají omezený/screenshot-based webview.
 
-Pokud firmware neumožní instalaci cizí appky (zamčené na signage systém bez možnosti obejít), použít vestavěnou cestu přes **led-cloud.com (XiaoHui Cloud)** — zdarma, cluster management pro víc panelů, editor programů má widget "web page/HTML", do kterého se vloží stejná URL naší stránky.
-
-1. Menu (4× klik na displej) → **Networking and Bluetooth** → ověřit Wi-Fi (panel 1 už má: `10.0.250.41`).
+1. Menu (4× klik na displej) → **Networking and Bluetooth** → ověřit Wi-Fi.
 2. **System setting** → **System Mode** → **Cloud networking mode**.
 3. Server adresa: `led-cloud.com`, zadat uživatelské jméno účtu (založit na `https://led-cloud.com/`).
-4. Uložit → zařízení by se mělo v cloudu objevit jako online (zelené).
-5. V cloudu: **Program → LCD Program** → přidat widget **web page/HTML** na celou plochu → URL naší stránky → **Send → Complete Update** na skupinu zařízení.
-
-**Riziko této cesty:** widgety "web page" v levných LED signage editorech bývají často jen omezený vestavěný webview, někdy i jen periodicky obnovovaný screenshot stránky místo živého vykreslení — kvalita/plynulost naší JS rotace není jistá. Proto je to záložní, ne primární plán.
+4. V cloudu: **Program → LCD Program** → widget **web page/HTML** → URL naší stránky → **Send → Complete Update**.
 
 ## Nasazení `index.html`
 
-Nasazeno: **https://tv-enoteka.vercel.app/** (GitHub `ssatek/tv-enoteka` → auto-deploy na push do `main`). Tuhle adresu vlož jako Start URL do Fully Kiosk Browseru (nebo do Huidu programu při postupu B).
+Živé: **https://tv-enoteka.vercel.app/** (GitHub `ssatek/tv-enoteka` → Vercel auto-deploy na push do `main`).
 
-## Otevřené body / co potřebuji od tebe
+## Otevřené body
 
-- [ ] Fyzický přístup k panelu 1 — zkusit Postup A (instalace APK) a nahlásit, jestli šla
-- [ ] Pokud Postup A nepůjde → přístupy pro založení účtu na led-cloud.com (Postup B)
-- [ ] Fyzická orientace panelů (na výšku/na šířku) — na fotce je 90° otočení
-- [ ] Přesná lokace jednotlivých panelů v Enotéce (pro tabulku výše)
-- [ ] Odsouhlasit obsah/pořadí rotace na kiosk stránce (návrh v `index.html`)
-- [x] Nasazení kiosk stránky na Vercel — hotovo, https://tv-enoteka.vercel.app/
+- [ ] **Kiosk Mode zůstává vypnutý** — při zapnutí docházelo ke konfliktu s nativním launcherem MagicPlayer (appka ho opakovaně blokovala → blikání "Blocked Magic Player"). Řešení: nejdřív nastavit Fully Kiosk jako výchozí Home/launcher zařízení (v appce sekce "Motion & Launcher" → "Set as Home/Device Launcher"), pak teprve zapnout Kiosk Mode.
+- [ ] Fyzická orientace panelu (na výšku/na šířku) — displej hlásí 90° otočení, potvrdit na místě a případně upravit CSS layout dlaždic v `index.html`.
+- [ ] Přesná lokace jednotlivých panelů v Enotéce (pro tabulku výše).
+- [ ] Panely 2 a 3 — fyzicky zapojit, zopakovat instalaci/nastavení, doplnit Device ID/IP do tabulky.
+- [x] Nasazení kiosk stránky na Vercel — hotovo.
+- [x] Instalace a základní funkčnost Fully Kiosk Browser na panelu 1 — hotovo.
+- [x] Automatický návrat na vstupní nabídku po nečinnosti — hotovo (Auto Reload on Idle).
