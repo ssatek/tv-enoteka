@@ -8,7 +8,7 @@ Digital signage — TV panely v Enotéce znojemských vín, promítající weby 
 - **Správa obsahu — primárně:** [Fully Kiosk Browser](https://www.fully-kiosk.com/en/) sideloadovaný APK, natrvalo nastavený na jednu URL (naši `index.html` po nasazení). Appka řeší kiosk mód (fullscreen, lockdown, autostart po výpadku proudu) — rotaci obsahu řeší náš JS, ne appka ani cloud.
 - **Správa obsahu — fallback**, pokud sideload appky nepůjde: cloud platforma [led-cloud.com](https://led-cloud.com/) (XiaoHui Cloud, Huidu) — bezplatná, cluster management pro víc panelů, program editor má widget "web page/HTML". Riziko: takové widgety bývají omezený/screenshot-based webview, ne jistá kvalita vykreslení naší JS rotace.
 - **Vlastní obsah:** `index.html` — statická kiosk stránka (HTML/CSS/JS bez frameworku), fullscreen iframe rotátor střídající weby v cyklu. Ať už appka nebo Huidu widget, oba jen zobrazují tuhle jednu URL — úpravy pořadí/obsahu se dělají v kódu, ne přes cloud/appku.
-- **Deploy (až bude odsouhlaseno):** Git → GitHub → Vercel, stejný postup jako u `menu_vinotrh.eshop` / `enoteka_vinotrh.eshop` (viz `01-projects/CLAUDE.md` → Deploy statických webů).
+- **Deploy:** živé na **https://tv-enoteka.vercel.app/** — GitHub `ssatek/tv-enoteka` → Vercel auto-deploy na push do `main` (stejný postup jako u `menu_vinotrh.eshop` / `enoteka_vinotrh.eshop`, viz `01-projects/CLAUDE.md` → Deploy statických webů).
 
 ## Struktura
 - `docs/nastaveni-tv.md` — postup registrace zařízení do cloudu, inventář panelů, otevřené body

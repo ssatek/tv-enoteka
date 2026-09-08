@@ -29,7 +29,7 @@ Prostý Chrome ale není kiosk režim (adresní řádek, dialogy po pádu, uživ
 1. **Ověřit, že jde instalovat APK.** V menu zařízení (4× klik na displej nebo tlačítko menu) → **System setting** → hledej "Unknown sources" / "Instalace z neznámých zdrojů" nebo "Developer options". Pokud je vypnuté, zapnout. Pokud v systému chybí Play Store, appka se instaluje jen ručně (viz krok 2).
 2. **Stáhnout Fully Kiosk Browser APK** přímo z oficiálního webu [fully-kiosk.com](https://www.fully-kiosk.com/en/) (ne Play Store, pro případ, že na zařízení Play Store není) — na USB flash disk, vložit do zařízení a nainstalovat přes souborový manažer / instalaci z USB.
 3. Po prvním spuštění proběhne **setup wizard** → nastavit:
-   - **Start URL:** `https://<naše-nasazená-adresa>/` (Vercel URL `index.html`, viz níže)
+   - **Start URL:** `https://tv-enoteka.vercel.app/`
    - **Exit PIN** (aby se appka nedala omylem/schválně opustit)
 4. V nastavení appky (Device Management):
    - **Launch on Boot** → zapnout (appka naskočí sama po výpadku proudu/restartu)
@@ -52,7 +52,7 @@ Pokud firmware neumožní instalaci cizí appky (zamčené na signage systém be
 
 ## Nasazení `index.html`
 
-Zatím jen lokální soubor. Až bude potvrzený obsah/pořadí, nasadíme na Vercel stejným postupem jako `menu_vinotrh.eshop` (viz `01-projects/CLAUDE.md` → Deploy statických webů) — vznikne veřejná URL, kterou vložíme jako Start URL do Fully Kiosk Browseru (nebo do Huidu programu při postupu B).
+Nasazeno: **https://tv-enoteka.vercel.app/** (GitHub `ssatek/tv-enoteka` → auto-deploy na push do `main`). Tuhle adresu vlož jako Start URL do Fully Kiosk Browseru (nebo do Huidu programu při postupu B).
 
 ## Otevřené body / co potřebuji od tebe
 
@@ -61,4 +61,4 @@ Zatím jen lokální soubor. Až bude potvrzený obsah/pořadí, nasadíme na Ve
 - [ ] Fyzická orientace panelů (na výšku/na šířku) — na fotce je 90° otočení
 - [ ] Přesná lokace jednotlivých panelů v Enotéce (pro tabulku výše)
 - [ ] Odsouhlasit obsah/pořadí rotace na kiosk stránce (návrh v `index.html`)
-- [ ] Souhlas s nasazením kiosk stránky na Vercel (nový projekt, veřejná URL)
+- [x] Nasazení kiosk stránky na Vercel — hotovo, https://tv-enoteka.vercel.app/
