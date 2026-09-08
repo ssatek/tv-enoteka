@@ -1,12 +1,12 @@
 # CLAUDE.md — tv_enoteka
 
 ## O projektu
-Digital signage — TV panely v Enotéce znojemských vín, promítající weby a prezentace o znojemském regionu a firmách skupiny ZWG.WINE (LAHOFER, ZNOVÍN, HANZEL, WALDBERG). 2–3 identické Android signage panely (Huidu / RK3576).
+Digital signage / dotykový kiosek — TV panely v Enotéce znojemských vín. Vstupní obrazovka s dlaždicemi, ze které si návštěvník klepnutím vybere web k prohlédnutí (e-shop, nápojový lístek, vinná karta, zážitky v regionu, LAHOFER). 2–3 identické Android signage panely (Huidu / RK3576).
 
 ## Stack
-- **Hardware:** Huidu signage přehrávač, firmware "MagicPlayer", postavený na běžném Androidu 14 (WebView 127). Ne uzamčená smart TV — kromě vestavěného signage systému (Huidu cloud) na něm nejspíš jde nainstalovat i běžnou appku.
-- **Správa obsahu — primárně:** [Fully Kiosk Browser](https://www.fully-kiosk.com/en/) sideloadovaný APK, natrvalo nastavený na jednu URL (naši `index.html` po nasazení). Appka řeší kiosk mód (fullscreen, lockdown, autostart po výpadku proudu) — rotaci obsahu řeší náš JS, ne appka ani cloud.
-- **Správa obsahu — fallback**, pokud sideload appky nepůjde: cloud platforma [led-cloud.com](https://led-cloud.com/) (XiaoHui Cloud, Huidu) — bezplatná, cluster management pro víc panelů, program editor má widget "web page/HTML". Riziko: takové widgety bývají omezený/screenshot-based webview, ne jistá kvalita vykreslení naší JS rotace.
+- **Hardware:** Huidu signage přehrávač, firmware "MagicPlayer", postavený na běžném Androidu 14 (WebView 127), dotykový displej. Ne uzamčená smart TV — kromě vestavěného signage systému (Huidu cloud) na něm nejspíš jde nainstalovat i běžnou appku.
+- **Správa obsahu — primárně:** [Fully Kiosk Browser](https://www.fully-kiosk.com/en/) sideloadovaný APK, natrvalo nastavený na jednu URL (naši `index.html`). Appka má řešit kiosk mód (fullscreen, lockdown, autostart po výpadku proudu) — zatím rozpracováno, viz Otevřené body.
+- **Správa obsahu — fallback**, pokud sideload appky nepůjde: cloud platforma [led-cloud.com](https://led-cloud.com/) (XiaoHui Cloud, Huidu) — bezplatná, cluster management pro víc panelů, program editor má widget "web page/HTML". Riziko: takové widgety bývají omezený/screenshot-based webview, kvalita vykreslení naší stránky není jistá.
 - **Vlastní obsah:** `index.html` — vstupní/výběrová obrazovka (HTML/CSS/JS bez frameworku, dotykové dlaždice). Žádná automatická rotace — návštěvník si klepnutím vybere web, prohlížeč na něj přímo naviguje (top-level, ne iframe).
 - **Deploy:** živé na **https://tv-enoteka.vercel.app/** — GitHub `ssatek/tv-enoteka` → Vercel auto-deploy na push do `main` (stejný postup jako u `menu_vinotrh.eshop` / `enoteka_vinotrh.eshop`, viz `01-projects/CLAUDE.md` → Deploy statických webů).
 
