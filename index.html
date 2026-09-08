@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TV Enotéka — Kiosk</title>
+<title>TV Enotéka — Nabídka</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
@@ -12,163 +12,156 @@
     --color-black: #1E1F21;
     --color-black-soft: #252729;
     --color-olive: #8CA334;
+    --color-olive-dark: #6E8028;
     --color-cream: #F6F3EC;
     --font-display: 'Jost', system-ui, sans-serif;
     --font-body: 'Source Sans 3', system-ui, sans-serif;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
     width: 100vw; height: 100vh;
     overflow: hidden;
     background: var(--color-black);
     font-family: var(--font-body);
-  }
-
-  #stage { position: fixed; inset: 0; }
-
-  .slide-frame {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    border: 0;
-    opacity: 0;
-    transition: opacity 1.1s ease;
-    background: var(--color-cream);
-  }
-  .slide-frame.active { opacity: 1; z-index: 2; }
-
-  /* Úvodní / chybová obrazovka, když se web nepodaří načíst nebo než naskočí první slide */
-  .fallback {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 1.2rem;
-    background: var(--color-black);
     color: var(--color-cream);
-    text-align: center;
-    padding: 4vw;
   }
-  .fallback__eyebrow {
+
+  #screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 4vh 4vw 2.4vh;
+  }
+
+  header {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-bottom: 3vh;
+  }
+  .eyebrow {
     font-family: var(--font-display);
-    font-size: clamp(0.8rem, 1.4vw, 1.1rem);
-    letter-spacing: 0.28em;
+    font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--color-olive);
+    margin-bottom: 1.2vh;
   }
-  .fallback__title {
+  h1 {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.6rem, 4vw, 3rem);
-  }
-  .fallback__note {
-    font-size: clamp(0.9rem, 1.6vw, 1.2rem);
-    opacity: 0.7;
-    max-width: 60ch;
+    font-size: clamp(1.8rem, 3.6vw, 3rem);
   }
 
-  /* Diskrétní stavový pruh dole — název aktuálního slidu + hodiny */
-  #statusbar {
-    position: fixed; left: 0; right: 0; bottom: 0;
-    z-index: 5;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.55vw 1.4vw;
-    background: linear-gradient(0deg, rgba(30,31,33,0.82), rgba(30,31,33,0));
+  /* === DLAŽDICE === */
+  #tiles {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vh;
+    min-height: 0;
+  }
+
+  .tile {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6vh;
+    text-decoration: none;
     color: var(--color-cream);
+    background: var(--color-black-soft);
+    border: 1px solid rgba(246,243,236,0.12);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  }
+  .tile::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--color-olive);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .tile:active {
+    background: var(--color-olive-dark);
+    border-color: var(--color-olive);
+    transform: scale(0.985);
+  }
+  .tile:active::before { opacity: 1; }
+
+  .tile__name {
     font-family: var(--font-display);
-    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+    letter-spacing: 0.02em;
+  }
+  .tile__desc {
+    font-size: clamp(0.85rem, 1.5vw, 1.2rem);
+    color: rgba(246,243,236,0.62);
+  }
+
+  footer {
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.6em;
+    margin-top: 2.2vh;
+    font-family: var(--font-display);
+    font-size: clamp(0.7rem, 1.1vw, 0.95rem);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    color: rgba(246,243,236,0.45);
   }
-  #statusbar.visible { opacity: 1; }
-  #statusbar .dot { color: var(--color-olive); margin: 0 0.6em; }
+  footer .dot { color: var(--color-olive); }
 </style>
 </head>
 <body>
 
-<div id="stage">
-  <div class="fallback" id="fallback">
-    <div class="fallback__eyebrow">TV Enotéka</div>
-    <div class="fallback__title">Načítám program…</div>
-    <div class="fallback__note">Pokud se obsah nenačte do pár vteřin, zkontroluj připojení k internetu.</div>
-  </div>
-</div>
+<div id="screen">
+  <header>
+    <div class="eyebrow">Enotéka znojemských vín</div>
+    <h1>Dotkněte se pro výběr</h1>
+  </header>
 
-<div id="statusbar">
-  <span id="slide-label"></span>
-  <span><span class="dot">•</span><span id="clock"></span></span>
+  <div id="tiles">
+    <!-- Dlaždice = přímý odkaz (top-level navigace), ne iframe —
+         vinotrh.cz a ochutnejznojmo.cz mají X-Frame-Options a nejdou vložit do rámečku,
+         takže se kvůli konzistenci takhle chovají všechny dlaždice stejně. -->
+    <a class="tile" href="https://vinotrh.cz/">
+      <span class="tile__name">VINOTRH.CZ</span>
+      <span class="tile__desc">Náš e-shop se znojemskými víny</span>
+    </a>
+    <a class="tile" href="https://menu.vinotrh.cz/">
+      <span class="tile__name">Nápojový lístek</span>
+      <span class="tile__desc">menu.vinotrh.cz</span>
+    </a>
+    <a class="tile" href="https://enoteka.vinotrh.cz/">
+      <span class="tile__name">Enotéka — vinná karta</span>
+      <span class="tile__desc">120 vzorků vín, enoteka.vinotrh.cz</span>
+    </a>
+    <a class="tile" href="https://ochutnejznojmo.cz/">
+      <span class="tile__name">Ochutnej Znojmo</span>
+      <span class="tile__desc">Zážitky a degustace v regionu</span>
+    </a>
+    <a class="tile" href="https://lahofer.cz/">
+      <span class="tile__name">LAHOFER</span>
+      <span class="tile__desc">Vinařství a hotel</span>
+    </a>
+  </div>
+
+  <footer>
+    <span id="clock"></span>
+  </footer>
 </div>
 
 <script>
-/* =========================================================================
-   KONFIGURACE ROTACE
-   Uprav pořadí, URL a délku zobrazení (v sekundách) jednotlivých slidů.
-   Slide typu "url" vykresluje cizí web v iframe (musí povolovat framing).
-   ========================================================================= */
-const SLIDES = [
-  { label: 'ZWG.WINE',        url: 'https://www.zwg.wine/',                    seconds: 25 },
-  { label: 'Enotéka — vinná karta', url: 'https://enoteka.vinotrh.cz/',        seconds: 25 },
-  { label: 'Nápojový lístek', url: 'https://menu.vinotrh.cz/',                 seconds: 25 },
-];
-
-// Celá stránka se sama tvrdě reloadne po X hodinách běhu (prevence memory leaků na kiosk zařízení).
-const AUTO_RELOAD_HOURS = 6;
-
-// ==========================================================================
-
-const stage = document.getElementById('stage');
-const fallback = document.getElementById('fallback');
-const statusbar = document.getElementById('statusbar');
-const slideLabel = document.getElementById('slide-label');
-const clockEl = document.getElementById('clock');
-
-let frames = [];
-let current = -1;
-
-function buildFrames() {
-  SLIDES.forEach((slide, i) => {
-    const f = document.createElement('iframe');
-    f.className = 'slide-frame';
-    f.src = slide.url;
-    f.setAttribute('title', slide.label);
-    f.setAttribute('loading', i === 0 ? 'eager' : 'lazy');
-    stage.appendChild(f);
-    frames.push(f);
-  });
-}
-
-function showSlide(index) {
-  if (frames.length === 0) return;
-  frames.forEach((f, i) => f.classList.toggle('active', i === index));
-  fallback.style.display = 'none';
-  slideLabel.textContent = SLIDES[index].label;
-  statusbar.classList.add('visible');
-  current = index;
-}
-
-function nextSlide() {
-  const next = (current + 1) % SLIDES.length;
-  showSlide(next);
-  const seconds = SLIDES[next].seconds || 20;
-  setTimeout(nextSlide, seconds * 1000);
-}
-
 function tickClock() {
-  const now = new Date();
-  clockEl.textContent = now.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
 }
-
-if (SLIDES.length > 0) {
-  buildFrames();
-  setTimeout(nextSlide, 800);
-} else {
-  fallback.querySelector('.fallback__title').textContent = 'Žádný obsah k zobrazení';
-}
-
 tickClock();
 setInterval(tickClock, 30 * 1000);
-
-setTimeout(() => window.location.reload(), AUTO_RELOAD_HOURS * 60 * 60 * 1000);
 </script>
 
 </body>
