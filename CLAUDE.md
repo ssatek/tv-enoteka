@@ -25,7 +25,9 @@ Digital signage / dotykový kiosek — TV panely v Enotéce znojemských vín. V
 | Ochutnej Znojmo | https://ochutnejznojmo.cz/ | ❌ `X-Frame-Options: SAMEORIGIN` |
 | LAHOFER | https://lahofer.cz/ | ✅ lze i do iframe |
 
-Protože 2 z 5 webů nejdou vložit do iframe (blokují to hlavičkou), chovají se **všechny** dlaždice stejně — přímý odkaz, ne iframe. Návštěvník tím opouští naši stránku; návrat zpět na nabídku řeší **Fully Kiosk "Auto Reload on Idle"** (30–60 s nečinnosti → návrat na Start URL) — nastaveno a ověřeno funkční na panelu 1.
+Protože 2 z 5 webů nejdou vložit do iframe (blokují to hlavičkou), chovají se **všechny** dlaždice stejně — přímý odkaz, ne iframe. Návštěvník tím opouští naši stránku a prohlíží cizí web běžnou navigací:
+- **Krok zpět uvnitř webu** (např. detail vína → seznam vín) — Fully Kiosk **Show Action Bar + Show Back Button**, funkční.
+- **Návrat až na naši nabídku** po nečinnosti — Fully Kiosk **Auto Reload on Idle** (30–60 s → návrat na Start URL), funkční.
 
 `www_zwg.wine` a `prezentace_ZWG` byly z nabídky vyřazeny na žádost uživatele (2026-09-08).
 
